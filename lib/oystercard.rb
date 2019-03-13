@@ -6,8 +6,9 @@ class Oystercard
   REQUIRED_BALANCE = 1
   MINIMUM_FARE = 2
 
-  def initialize
+  def initialize(journey = Journey)
     @balance = 0
+    @journey = journey
     @journeys = []
   end
 
@@ -18,19 +19,18 @@ class Oystercard
   end
 
   def in_journey?
-    @journeys.empty? ? false : @journeys[-1][:exit].nil?
+    @journeys.empty? ? false : !@journeys[-1].complete?
   end
 
   def touch_in(entry_station)
     raise min_balance_message if @balance < REQUIRED_BALANCE
-  
-    @journeys << { :entry => entry_station }
+
+    @journeys << @journey.new(entry_station)
   end
 
   def touch_out(exit_station)
-    # @entry_station = nil
-    @journeys[-1][:exit] = exit_station
-    deduct(MINIMUM_FARE)
+    @journeys[-1].finish(exit_station)
+    deduct(@journeys[-1].fare)
   end
 
   private

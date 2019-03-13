@@ -62,7 +62,7 @@ describe Oystercard do
     it 'records the entry station' do
       subject.top_up(10)
       subject.touch_in(@entry_station)
-      expect(subject.journeys[-1][:entry]).to eq @entry_station
+      expect(subject.journeys[-1].entry_station).to eq @entry_station
     end
 
     it 'raises an error when the balance is less than £1' do
@@ -83,7 +83,7 @@ describe Oystercard do
 
     it 'records the exit station' do
       subject.touch_out(@exit_station)
-      expect(subject.journeys[-1][:exit]).to eq @exit_station
+      expect(subject.journeys[-1].exit_station).to eq @exit_station
     end
 
     it 'deducts the correct amount from my card for the journey' do
@@ -102,8 +102,8 @@ describe Oystercard do
         subject.touch_in(@entry_station)
         subject.touch_out(@exit_station)
       end
-      it "returns an array containing a complete journey" do
-        expect(subject.journeys).to eq [{ entry: @entry_station, exit: @exit_station }]
+      it "contains a complete journey" do
+        expect(subject.journeys[-1]).to be_complete
       end
     end
   end
