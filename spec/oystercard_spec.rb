@@ -103,7 +103,7 @@ describe Oystercard do
         subject.touch_out(@exit_station)
       end
       it "returns an array containing a complete journey" do
-        expect(subject.journeys).to eq [{entry: @entry_station, exit: @exit_station}]
+        expect(subject.journeys).to eq [{ entry: @entry_station, exit: @exit_station }]
       end
     end
   end

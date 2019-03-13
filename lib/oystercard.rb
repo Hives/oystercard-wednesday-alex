@@ -1,6 +1,6 @@
 class Oystercard
 
-  attr_reader :balance,  :journeys
+  attr_reader :balance, :journeys
   # attr_reader :entry_station,
 
   REQUIRED_BALANCE = 1
@@ -18,13 +18,13 @@ class Oystercard
   end
 
   def in_journey?
-    @journeys.empty? ? false : @journeys[-1][:exit] == nil
+    @journeys.empty? ? false : @journeys[-1][:exit].nil?
   end
 
   def touch_in(entry_station)
     raise min_balance_message if @balance < REQUIRED_BALANCE
   
-    @journeys << {:entry => entry_station}
+    @journeys << { :entry => entry_station }
   end
 
   def touch_out(exit_station)
