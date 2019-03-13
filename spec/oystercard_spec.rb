@@ -33,31 +33,41 @@ describe Oystercard do
     it 'returns false when first initialised' do
       expect(subject).not_to be_in_journey
     end
+    context 'after touching in' do
+      before :each do
+        subject.top_up(20)
+        subject.touch_in(@entry_station)
+      end
+      it 'returns true' do
+        expect(subject).to be_in_journey
+      end
+      context 'and after touching out again' do
+        before :each do
+          subject.touch_out(@exit_station)
+        end
+        it 'returns false' do
+          expect(subject).not_to be_in_journey
+        end
+      end
+    end
   end
   
   describe '#touch_in' do
-    it 'changes journey status' do
+    it 'sets in_journey status to true' do
       subject.top_up(90)
       subject.touch_in(@entry_station)
       expect(subject).to be_in_journey
     end
-
-    # it 'records the entry station' do
-    #   subject.top_up(10)
-    #   subject.touch_in(@entry_station)
-    #   expect(subject.entry_station).to eq @entry_station
-    # end
   
-    it 'raises an error when the balance is less than £1' do
-      expect { subject.touch_in(@entry_station) }.to raise_error "Sorry, your balance is too low to start this journey."
-    end
-
     it 'records the entry station' do
       subject.top_up(10)
       subject.touch_in(@entry_station)
       expect(subject.journeys[-1][:entry]).to eq @entry_station
     end
 
+    it 'raises an error when the balance is less than £1' do
+      expect { subject.touch_in(@entry_station) }.to raise_error "Sorry, your balance is too low to start this journey."
+    end
   end
 
   describe '#touch_out' do
@@ -65,13 +75,8 @@ describe Oystercard do
       subject.top_up(10)
       subject.touch_in(@entry_station)    
     end
-    
-    it 'deducts the correct amount from my card for the journey' do
-      minimum_fare = described_class::MINIMUM_FARE
-      expect { subject.touch_out(@exit_station) }.to change { subject.balance }.by(-minimum_fare)
-    end
 
-    it 'changes journey status' do
+    it 'sets in_journey status to false' do
       subject.touch_out(@exit_station)
       expect(subject).not_to be_in_journey
     end
@@ -80,15 +85,26 @@ describe Oystercard do
       subject.touch_out(@exit_station)
       expect(subject.journeys[-1][:exit]).to eq @exit_station
     end
-    # it 'clears the entry station' do
-    #   subject.touch_out
-    #   expect(subject.entry_station).to be_nil
-    # end
+
+    it 'deducts the correct amount from my card for the journey' do
+      minimum_fare = described_class::MINIMUM_FARE
+      expect { subject.touch_out(@exit_station) }.to change { subject.balance }.by(-minimum_fare)
+    end
   end
 
   describe '#journeys' do
     it "returns an empty array at first" do
       expect(subject.journeys).to eq []
+    end
+    context "after touching in and out" do
+      before :each do
+        subject.top_up(20)
+        subject.touch_in(@entry_station)
+        subject.touch_out(@exit_station)
+      end
+      it "returns an array containing a complete journey" do
+        expect(subject.journeys).to eq [{entry: @entry_station, exit: @exit_station}]
+      end
     end
   end
 end

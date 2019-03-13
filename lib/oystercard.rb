@@ -18,13 +18,7 @@ class Oystercard
   end
 
   def in_journey?
-    if @journeys.empty? 
-      return false
-    elsif @journeys[-1][:exit] == nil
-      return true
-    else 
-      false
-    end
+    @journeys.empty? ? false : @journeys[-1][:exit] == nil
   end
 
   def touch_in(entry_station)
