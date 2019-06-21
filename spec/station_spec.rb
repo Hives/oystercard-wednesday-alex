@@ -13,6 +13,7 @@ describe Station do
       expect(station.name).to eq @name
     end
     it "stores 'zone' in a variable and exposes it" do
+      pending("something or other")
       station = described_class.new(@name, @zone)
       expect(station.zone).to eq @zone
     end
